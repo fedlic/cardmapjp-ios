@@ -13,14 +13,56 @@ enum ShopFilter: String, CaseIterable {
 @MainActor
 class ShopStore: ObservableObject {
     @Published var shops: [Shop] = []
-    @Published var inventory: [String: [ShopInventory]] = [:]
     @Published var isLoading = false
     @Published var error: String?
     @Published var searchText = ""
     @Published var activeFilters: Set<ShopFilter> = []
     @Published var userLocation: CLLocation?
 
-    var filteredShops: [Shop] {
+    /// Cached filtered/sorted shops — recomputed only when inputs change.
+    @Published private(set) var filteredShops: [Shop] = []
+
+    /// LRU inventory cache with a max size to prevent unbounded growth.
+    private var inventory: [String: [ShopInventory]] = [:]
+    private var inventoryAccessOrder: [String] = []
+    private let maxInventoryCacheSize = 20
+
+    private var cancellables = Set<AnyCancellable>()
+
+    /// Pre-computed distance cache to avoid creating CLLocation objects on every sort.
+    private var distanceCache: [String: Double] = [:]
+
+    init() {
+        // Recompute filteredShops only when inputs actually change, debounced.
+        Publishers.CombineLatest4(
+            $shops,
+            $searchText.debounce(for: .milliseconds(300), scheduler: RunLoop.main),
+            $activeFilters,
+            $userLocation
+                .removeDuplicates { a, b in
+                    // Only recalculate when the user has moved more than 50m.
+                    guard let a, let b else { return a == nil && b == nil }
+                    return a.distance(from: b) < 50
+                }
+        )
+        .receive(on: RunLoop.main)
+        .sink { [weak self] shops, searchText, activeFilters, userLocation in
+            self?.recomputeFilteredShops(
+                shops: shops,
+                searchText: searchText,
+                activeFilters: activeFilters,
+                userLocation: userLocation
+            )
+        }
+        .store(in: &cancellables)
+    }
+
+    private func recomputeFilteredShops(
+        shops: [Shop],
+        searchText: String,
+        activeFilters: Set<ShopFilter>,
+        userLocation: CLLocation?
+    ) {
         var result = shops
 
         if !searchText.isEmpty {
@@ -32,37 +74,43 @@ class ShopStore: ObservableObject {
             }
         }
 
-        for filter in activeFilters {
-            switch filter {
-            case .openNow:
-                result = result.filter { $0.openHours?.isOpenNow == true }
-            case .englishStaff:
-                result = result.filter { $0.englishStaff == true }
-            case .psaGraded:
-                result = result.filter { $0.sellsPsaGraded == true }
-            case .boosterBox:
-                result = result.filter { $0.sellsBoosterBox == true }
-            case .beginnerFriendly:
-                result = result.filter { $0.beginnerFriendly == true }
+        if !activeFilters.isEmpty {
+            result = result.filter { shop in
+                activeFilters.allSatisfy { filter in
+                    switch filter {
+                    case .openNow: return shop.openHours?.isOpenNow == true
+                    case .englishStaff: return shop.englishStaff == true
+                    case .psaGraded: return shop.sellsPsaGraded == true
+                    case .boosterBox: return shop.sellsBoosterBox == true
+                    case .beginnerFriendly: return shop.beginnerFriendly == true
+                    }
+                }
             }
         }
 
         if let location = userLocation {
+            // Rebuild distance cache once, not per-comparison.
+            distanceCache.removeAll(keepingCapacity: true)
+            for shop in result {
+                if let coord = shop.coordinate {
+                    distanceCache[shop.id] = location.distance(
+                        from: CLLocation(latitude: coord.latitude, longitude: coord.longitude)
+                    )
+                }
+            }
             result.sort { a, b in
-                guard let coordA = a.coordinate, let coordB = b.coordinate else { return false }
-                let distA = location.distance(from: CLLocation(latitude: coordA.latitude, longitude: coordA.longitude))
-                let distB = location.distance(from: CLLocation(latitude: coordB.latitude, longitude: coordB.longitude))
-                return distA < distB
+                (distanceCache[a.id] ?? .greatestFiniteMagnitude) <
+                (distanceCache[b.id] ?? .greatestFiniteMagnitude)
             }
         }
 
-        return result
+        filteredShops = result
     }
 
-    func shopsForRegion(_ regionSlug: String) -> [Shop] {
+    func shopsForRegion(_ region: Region) -> [Shop] {
         filteredShops.filter { shop in
             guard let regionId = shop.regionId else { return false }
-            return regionId == regionSlug
+            return regionId == region.regionId
         }
     }
 
@@ -87,6 +135,10 @@ class ShopStore: ObservableObject {
         isLoading = false
     }
 
+    func inventoryForShop(_ shopId: String) -> [ShopInventory]? {
+        inventory[shopId]
+    }
+
     func fetchInventory(for shopId: String) async {
         guard inventory[shopId] == nil else { return }
 
@@ -99,7 +151,13 @@ class ShopStore: ObservableObject {
                 .execute()
                 .value
 
+            // Evict oldest entries if cache is full.
+            if inventoryAccessOrder.count >= maxInventoryCacheSize {
+                let evictId = inventoryAccessOrder.removeFirst()
+                inventory.removeValue(forKey: evictId)
+            }
             inventory[shopId] = response
+            inventoryAccessOrder.append(shopId)
         } catch {
             print("Failed to fetch inventory: \(error)")
         }
@@ -114,6 +172,7 @@ class ShopStore: ObservableObject {
     }
 
     func distance(to shop: Shop) -> Double? {
+        if let cached = distanceCache[shop.id] { return cached }
         guard let location = userLocation, let coord = shop.coordinate else { return nil }
         return location.distance(from: CLLocation(latitude: coord.latitude, longitude: coord.longitude))
     }
