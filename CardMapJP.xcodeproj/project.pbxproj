@@ -22,6 +22,7 @@
 		A10013 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B10013 /* Assets.xcassets */; };
 		A10014 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B10014 /* Preview Assets.xcassets */; };
 		A10015 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = D10001 /* Supabase */; };
+		A10016 /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10016 /* SplashScreen.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +41,7 @@
 		B10013 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B10014 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		B10015 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B10016 /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
 		B10099 /* CardMapJP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CardMapJP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -96,6 +98,7 @@
 				B10004 /* ShopListScreen.swift */,
 				B10005 /* ShopDetailScreen.swift */,
 				B10006 /* RegionListScreen.swift */,
+				B10016 /* SplashScreen.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -216,6 +219,7 @@
 				A10010 /* ShopStore.swift in Sources */,
 				A10011 /* LocationManager.swift in Sources */,
 				A10012 /* SupabaseClient.swift in Sources */,
+				A10016 /* SplashScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
