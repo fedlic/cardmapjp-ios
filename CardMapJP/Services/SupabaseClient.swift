@@ -2,8 +2,8 @@ import Foundation
 import Supabase
 
 enum AppConfig {
-    static let supabaseURL = URL(string: "https://dlpjvbofizwxjkjqkqkv.supabase.co")!
-    static let supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRscGp2Ym9maXp3eGpranFrcWt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MDM2NTYsImV4cCI6MjA4OTM3OTY1Nn0.1EOFVIR4UbsEBjk9bqXdyM98NP6frJqe7gozSePQQsU"
+    static let supabaseURL = URL(string: "https://cardmap.fedlic.tokyo")!
+    static let supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InNlbGYtaG9zdGVkIiwiaWF0IjoxNzc0NDI3NzM0LCJleHAiOjIwODk3ODc3MzR9.gFu20BFN1tjxRKAw2MbiuUYhnlHT_0GWMTcb0lpcX6Y"
 }
 
 let supabase = SupabaseClient(

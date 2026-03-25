@@ -32,7 +32,13 @@ class ShopStore: ObservableObject {
     /// Pre-computed distance cache to avoid creating CLLocation objects on every sort.
     private var distanceCache: [String: Double] = [:]
 
+    /// UserDefaults key for offline cache.
+    private static let cacheKey = "cached_shops_json"
+    private static let cacheTimestampKey = "cached_shops_timestamp"
+
     init() {
+        // Load cached data immediately so the UI has something to show.
+        loadCachedShops()
         // Recompute filteredShops only when inputs actually change, debounced.
         Publishers.CombineLatest4(
             $shops,
@@ -128,11 +134,47 @@ class ShopStore: ObservableObject {
                 .value
 
             shops = response
+            cacheShops(response)
         } catch {
-            self.error = error.localizedDescription
+            // If we have no cached data either, show the error.
+            if shops.isEmpty {
+                self.error = error.localizedDescription
+            }
+            // Otherwise, silently use cached data.
         }
 
         isLoading = false
+    }
+
+    // MARK: - Offline Cache
+
+    private func cacheShops(_ shops: [Shop]) {
+        do {
+            let data = try JSONEncoder().encode(shops)
+            UserDefaults.standard.set(data, forKey: Self.cacheKey)
+            UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: Self.cacheTimestampKey)
+        } catch {
+            print("Failed to cache shops: \(error)")
+        }
+    }
+
+    private func loadCachedShops() {
+        guard let data = UserDefaults.standard.data(forKey: Self.cacheKey) else { return }
+        do {
+            let cached = try JSONDecoder().decode([Shop].self, from: data)
+            if !cached.isEmpty {
+                shops = cached
+            }
+        } catch {
+            print("Failed to load cached shops: \(error)")
+        }
+    }
+
+    /// Returns how long ago the cache was saved, or nil if no cache exists.
+    var cacheAge: TimeInterval? {
+        let ts = UserDefaults.standard.double(forKey: Self.cacheTimestampKey)
+        guard ts > 0 else { return nil }
+        return Date().timeIntervalSince1970 - ts
     }
 
     func inventoryForShop(_ shopId: String) -> [ShopInventory]? {

@@ -184,7 +184,7 @@ struct RegionDetailScreen: View {
                     } else {
                         ForEach(shops) { shop in
                             NavigationLink(value: shop) {
-                                ShopRow(shop: shop)
+                                RegionShopRow(shop: shop)
                             }
                             .padding(.horizontal)
                         }
@@ -196,7 +196,76 @@ struct RegionDetailScreen: View {
         .navigationTitle(region.nameEn)
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(for: Shop.self) { shop in
-            ShopDetailScreen(shop: shop)
+            RegionShopDetailView(shop: shop)
         }
+    }
+}
+
+// MARK: - Simple shop row for region list
+
+struct RegionShopRow: View {
+    let shop: Shop
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(shop.displayName)
+                .font(.subheadline.weight(.medium))
+            if !shop.displayNameJp.isEmpty {
+                Text(shop.displayNameJp)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            HStack(spacing: 6) {
+                if let rating = shop.googleRating {
+                    StarRatingView(rating: rating, starSize: 9)
+                    Text(String(format: "%.1f", rating))
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+                if shop.englishStaff == true {
+                    MicroBadge(text: "EN", color: .blue)
+                }
+            }
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+// MARK: - Simple shop detail for region navigation
+
+struct RegionShopDetailView: View {
+    let shop: Shop
+    @EnvironmentObject var shopStore: ShopStore
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text(shop.displayName)
+                    .font(.title2.weight(.bold))
+                if !shop.displayNameJp.isEmpty {
+                    Text(shop.displayNameJp)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                if let address = shop.addressEn ?? shop.addressJp {
+                    Label(address, systemImage: "mappin")
+                        .font(.subheadline)
+                }
+                if let summary = shop.aiSummary {
+                    Text(summary)
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+                }
+                if let coord = shop.coordinate {
+                    Link(destination: URL(string: "https://www.google.com/maps/dir/?api=1&destination=\(coord.latitude),\(coord.longitude)&travelmode=walking")!) {
+                        Label("Get Directions", systemImage: "figure.walk")
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+            }
+            .padding()
+        }
+        .navigationTitle(shop.displayName)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

@@ -23,6 +23,9 @@
 		A10014 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B10014 /* Preview Assets.xcassets */; };
 		A10015 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = D10001 /* Supabase */; };
 		A10016 /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10016 /* SplashScreen.swift */; };
+		A10017 /* HomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10017 /* HomeScreen.swift */; };
+		A10018 /* ShopDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10018 /* ShopDetailSheet.swift */; };
+		A10019 /* SharedComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10019 /* SharedComponents.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +45,9 @@
 		B10014 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		B10015 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B10016 /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
+		B10017 /* HomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreen.swift; sourceTree = "<group>"; };
+		B10018 /* ShopDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopDetailSheet.swift; sourceTree = "<group>"; };
+		B10019 /* SharedComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedComponents.swift; sourceTree = "<group>"; };
 		B10099 /* CardMapJP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CardMapJP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -93,6 +99,9 @@
 		E10004 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				B10017 /* HomeScreen.swift */,
+				B10018 /* ShopDetailSheet.swift */,
+				B10019 /* SharedComponents.swift */,
 				B10002 /* MainTabView.swift */,
 				B10003 /* MapScreen.swift */,
 				B10004 /* ShopListScreen.swift */,
@@ -220,6 +229,9 @@
 				A10011 /* LocationManager.swift in Sources */,
 				A10012 /* SupabaseClient.swift in Sources */,
 				A10016 /* SplashScreen.swift in Sources */,
+				A10017 /* HomeScreen.swift in Sources */,
+				A10018 /* ShopDetailSheet.swift in Sources */,
+				A10019 /* SharedComponents.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
