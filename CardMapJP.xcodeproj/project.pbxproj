@@ -26,6 +26,7 @@
 		A10017 /* HomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10017 /* HomeScreen.swift */; };
 		A10018 /* ShopDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10018 /* ShopDetailSheet.swift */; };
 		A10019 /* SharedComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10019 /* SharedComponents.swift */; };
+		A10020 /* LaunchFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10020 /* LaunchFlowView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +49,7 @@
 		B10017 /* HomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreen.swift; sourceTree = "<group>"; };
 		B10018 /* ShopDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopDetailSheet.swift; sourceTree = "<group>"; };
 		B10019 /* SharedComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedComponents.swift; sourceTree = "<group>"; };
+		B10020 /* LaunchFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchFlowView.swift; sourceTree = "<group>"; };
 		B10099 /* CardMapJP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CardMapJP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -102,6 +104,7 @@
 				B10017 /* HomeScreen.swift */,
 				B10018 /* ShopDetailSheet.swift */,
 				B10019 /* SharedComponents.swift */,
+				B10020 /* LaunchFlowView.swift */,
 				B10002 /* MainTabView.swift */,
 				B10003 /* MapScreen.swift */,
 				B10004 /* ShopListScreen.swift */,
@@ -232,6 +235,7 @@
 				A10017 /* HomeScreen.swift in Sources */,
 				A10018 /* ShopDetailSheet.swift in Sources */,
 				A10019 /* SharedComponents.swift in Sources */,
+				A10020 /* LaunchFlowView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
