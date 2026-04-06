@@ -131,32 +131,26 @@ struct OpenHours: Codable {
         }
     }
 
+    /// Checks if the shop is currently open using JST (Asia/Tokyo) for both
+    /// day-of-week and time comparison. Uses string comparison on "HH:mm" format
+    /// to avoid DateFormatter timezone pitfalls.
     var isOpenNow: Bool? {
-        let calendar = Calendar.current
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "Asia/Tokyo")!
+
         let now = Date()
         let dayOfWeek = calendar.component(.weekday, from: now)
         guard let todayHours = hours(for: dayOfWeek) else { return nil }
 
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")
+        let hour = calendar.component(.hour, from: now)
+        let minute = calendar.component(.minute, from: now)
+        let nowTime = String(format: "%02d:%02d", hour, minute)
 
-        guard let openTime = formatter.date(from: todayHours.open),
-              let closeTime = formatter.date(from: todayHours.close) else { return nil }
-
-        let nowComponents = calendar.dateComponents(in: TimeZone(identifier: "Asia/Tokyo")!, from: now)
-        let nowMinutes = (nowComponents.hour ?? 0) * 60 + (nowComponents.minute ?? 0)
-
-        let openComponents = calendar.dateComponents([.hour, .minute], from: openTime)
-        let openMinutes = (openComponents.hour ?? 0) * 60 + (openComponents.minute ?? 0)
-
-        let closeComponents = calendar.dateComponents([.hour, .minute], from: closeTime)
-        let closeMinutes = (closeComponents.hour ?? 0) * 60 + (closeComponents.minute ?? 0)
-
-        if closeMinutes > openMinutes {
-            return nowMinutes >= openMinutes && nowMinutes < closeMinutes
+        if todayHours.close > todayHours.open {
+            return nowTime >= todayHours.open && nowTime < todayHours.close
         } else {
-            return nowMinutes >= openMinutes || nowMinutes < closeMinutes
+            // Overnight hours (e.g., 22:00 - 02:00)
+            return nowTime >= todayHours.open || nowTime < todayHours.close
         }
     }
 }

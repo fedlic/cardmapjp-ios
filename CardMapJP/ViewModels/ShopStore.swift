@@ -23,7 +23,7 @@ class ShopStore: ObservableObject {
     @Published private(set) var filteredShops: [Shop] = []
 
     /// LRU inventory cache with a max size to prevent unbounded growth.
-    private var inventory: [String: [ShopInventory]] = [:]
+    private(set) var inventory: [String: [ShopInventory]] = [:]
     private var inventoryAccessOrder: [String] = []
     private let maxInventoryCacheSize = 20
 

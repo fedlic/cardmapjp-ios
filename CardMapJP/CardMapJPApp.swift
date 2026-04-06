@@ -5,7 +5,7 @@ struct CardMapJPApp: App {
     @StateObject private var shopStore = ShopStore()
     var body: some Scene {
         WindowGroup {
-            LaunchFlowView()
+            MainTabView()
                 .environmentObject(shopStore)
                 .task {
                     await shopStore.fetchShops()
